@@ -1,0 +1,81 @@
+<!doctype html>
+<title>JavaScript五子棋盘</title>
+<style>
+    .board{position:relative}
+    .board table{background:#aaa}
+    .board td{background:#fff;}
+    .board div{background:#000;position:absolute;border:solid 1px #000;}
+    .board div.w{background:#fff}
+</style>
+<div id="myboard1" style="float:left;margin:50px"></div>
+<div id="myboard2" style="float:left;margin-top:50px"></div>
+<script>
+    //@boardId：五子棋盘容器id  
+    //@length：单元格个数，就是几x几的棋盘，默认10
+    //@width：单元格宽度，默认50
+    //@chessWidth：棋子宽度，默认30
+    function ChessBoard(boardId, length, width, chessWidth) {
+        this.board = this.$(boardId);
+        if (!this.board) throw boardId + " not found.";
+        this.length = length || 10;
+        this.width = width || 50;
+        this.cellRange = Math.floor(this.width / 2);
+        this.chessWidth = Math.min(this.width, chessWidth || 30);
+        this.initBoard();
+        this.initEvent();
+        this.chessTotal=(this.width+1)*(this.width+1);//可以下的总旗子个数
+        this.xy = { x: 0, y: 0 };//table容器的offsetLeft/offsetTop值
+        this.initXY();
+        this.placeChess = {};//记录表格定点对应的位置是否已经放置了棋子
+        this.chessNum = 0;
+        this.end = false;//记录是否输赢
+    }
+    ChessBoard.prototype.$ = function (id) { return document.getElementById(id) }
+    ChessBoard.prototype.initXY = function () {
+        var p = this.board.getElementsByTagName('table')[0];
+        while (p) { this.xy.x += p.offsetLeft; this.xy.y += p.offsetTop; p = p.offsetParent }
+    }
+    ChessBoard.prototype.createChesss = function (e) {
+        if (this.end) { alert('已经得出输赢或者所有旗子已经下完！'); return;}
+        var x = e.clientX - this.xy.x, y = e.clientY - this.xy.y;//x，y相对于容器的位置
+        var px = Math.floor(x / this.cellRange), py = Math.floor(y / this.cellRange);//转为坐标
+        if (px > 1) px = Math.ceil(px / 2);
+        if (py > 1) py = Math.ceil(py / 2);
+        if (this.placeChess[px + '-' + py]!==undefined) return;//此位置已经放置过棋子
+        var div = document.createElement('div');
+        if(this.chessNum%2)div.className='w'
+        var width = this.chessWidth - 1, mg = this.chessWidth / 2;
+        //依据坐标计算棋子left/top
+        div.style.cssText = 'border-radius:' + width + 'px;-moz-border-radius:' + width + 'px;-webit-border-radius:' + width + 'px;-o-border-radius:' + width + 'px;-khtml-border-radius:' + width + 'px;width:' + width + 'px;height:' + width + 'px;'
+        + 'left:' + (px * this.width) + 'px;top:' + (py * this.width) + 'px;margin-left:-' + mg + 'px;margin-top:-' + mg + 'px';
+        
+        this.board.firstChild.appendChild(div);
+        this.placeChess[px + '-' + py] = this.chessNum % 2;//0为黑棋子，1为白棋子
+        this.chessNum++;
+        this.checkWin(px, py,  this.chessNum == this.chessTotal);
+    }
+    //判断是否赢棋的算法，自己按照规则来判断，依据当前下的旗子坐标px，py检查placeChess存储的状态
+    //如规则是水平，垂直，对角5个连一起算赢什么的，当（px,py）为(0,0)，如果0-0~0-5都是相同的数字(如1，白色棋子5个棋子连一起就白棋子赢）
+    ChessBoard.prototype.checkWin = function (px, py, placeAllChess) {
+        //if(出现水平，垂直，对角5连的判断){ this.end=true; alert(['黑','白']this.placeChess[px + '-' + py]+'赢');return false;}
+        if (placeAllChess) {//所有旗子都下完没有出现规则说的清空该怎么判断输赢。。。
+            this.end = true;
+        }
+    }
+    ChessBoard.prototype.initBoard = function () {//初始化棋盘背景，表格模拟
+        var s = '<div class="board"><table cellpadding="0" cellspacing="1">',width=this.width-1;
+        for (var i = 0; i < this.length; i++) {
+            s += '<tr>'
+            for (var j = 0; j < this.length; j++) s += '<td style="width:' + width + 'px;height:' + width + 'px"></td>'
+            s += '</tr>'
+        }
+        s += '</table></div>';
+        this.board.innerHTML = s;
+    }
+    ChessBoard.prototype.initEvent = function () {//初始化单击事件
+        var me = this;
+        this.board.getElementsByTagName('table')[0].onclick = function (e) { me.createChesss(e || window.event); }
+    }
+    var b1=new ChessBoard('myboard1',8);
+    var b2=new ChessBoard('myboard2', 5);
+</script>
