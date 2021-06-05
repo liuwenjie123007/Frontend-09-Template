@@ -1,0 +1,16 @@
+<div id="a" style="width: 100%;height: 300px;background: lightblue;">
+  <div id="b" style="width: 100%;height: 200px;background: pink;"/></div>
+</div>
+<script>
+  var a = document.getElementById("a");
+  var b = document.getElementById("b");
+  // 默认冒泡
+  a.addEventListener("click", function() {console.log("a")});
+  b.addEventListener("click", function() {console.log("b")});
+  // 捕获
+  a.addEventListener("click", function() {console.log("a1")}, true);
+  b.addEventListener("click", function() {console.log("b1")}, true);
+
+  // 后加的会后触发
+  b.addEventListener("click", function() {console.log("b2")});
+</script>
