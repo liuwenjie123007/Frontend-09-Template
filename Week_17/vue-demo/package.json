@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "description": "",
+  "main": "generators/app/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/preset-env": "^7.14.5",
+    "vue": "^2.6.14"
+  },
+  "name": "vue-demo",
+  "devDependencies": {
+    "copy-webpack-plugin": "^8.1.1",
+    "css-loader": "^5.2.6",
+    "vue-loader": "^15.9.7",
+    "vue-style-loader": "^4.1.3",
+    "vue-template-compiler": "^2.6.14",
+    "webpack": "^5.39.1"
+  }
+}
